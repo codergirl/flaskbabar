@@ -3,7 +3,7 @@ from flask import Flask
 import datetime
 
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask import request
+from flask import request, jsonify
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -38,7 +38,7 @@ def get_users():
     json = {}
     for user in all_users:
         json[user.id] = {'name': user.name, 'email': user.email}
-    return json
+    return jsonify(json)
 
 
 
