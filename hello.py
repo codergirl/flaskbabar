@@ -61,9 +61,11 @@ def add_task():
     task_name = request.args.get('name')
     task_description = request.args.get('description')
     dismissable = request.args.get('dismissable')
-    due_date = request.args.get('due_date')
     if dismissable is None:
         dismissable = True
+    due_date = request.args.get('due_date')
+    if due_date is not None:
+        due_date = datetime.fromtimestamp(due_date)
     new_task = Task(user_id=the_user.id, name=task_name, description=task_description, dismissable=dismissable, due_date=due_date, active=True)
     db.session.add(new_task)
     db.session.commit()
