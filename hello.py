@@ -1,6 +1,7 @@
 import os
 from flask import Flask
 import datetime
+import time
 
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask import request, jsonify
@@ -90,5 +91,8 @@ def get_tasks_for_user():
     return jsonify(json)
 
 def get_task_view(task):
-    return {'name': task.name, 'description': task.description, 'dismissable': task.dismissable, 'due_date':task.due_date, 'active':task.active}
+    due_date = task.due_date
+    if task.due_date is not None:
+        due_date = time.mktime(due_date.timetuple())
+    return {'name': task.name, 'description': task.description, 'dismissable': task.dismissable, 'due_date':due_date, 'active':task.active}
 
