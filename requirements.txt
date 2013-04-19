@@ -1,0 +1,8 @@
+Flask==0.9
+Jinja2==2.6
+Unicorn==1.0.1
+Werkzeug==0.8.3
+distribute==0.6.34
+gunicorn==0.17.2
+poster==0.8.1
+wsgiref==0.1.2
