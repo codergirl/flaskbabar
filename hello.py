@@ -6,6 +6,8 @@ from pymongo import MongoClient
 client = MongoClient()
 
 app = Flask(__name__)
+app.config.from_pyfile('config.py')
+
 
 @app.route('/')
 def hello():
