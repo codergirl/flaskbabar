@@ -67,7 +67,8 @@ def add_task():
     new_task = Task(user_id=the_user.id, name=task_name, description=task_description, dismissable=dismissable, due_date=due_date, active=True)
     db.session.add(new_task)
     db.session.commit()
-    json = {new_task.id: 'name':new_task.name, 'description':new_task.description, 'dismissable':new_task.dismissable, 'due_date':new_task.due_date, 'active':new_task.active}
+    json = {new_task.id: get_task_view(new_task)}
+    return jsonify(json)
 
 @app.route('/dismiss_task')
 def dismiss_task():
@@ -75,7 +76,7 @@ def dismiss_task():
     the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
     the_task.active = False
     db.session.commit()
-    return get_task_view(the_task) 
+    return jsonify(get_task_view(the_task))
 
 @app.route('/get_tasks_for_user')
 def get_tasks_for_user():
