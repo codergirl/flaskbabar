@@ -39,7 +39,7 @@ class Task(db.Model):
 def index_page():
     return 'index'
 
-@app.route('/create_user')
+@app.route('/create_user')  # required: username, email
 def create_user():
     new_user = BabarUser(request.args.get('username'), request.args.get('email'))
     db.session.add(new_user)
@@ -48,7 +48,7 @@ def create_user():
     return jsonify(json)
 
 
-@app.route('/get_users')
+@app.route('/get_users') # none
 def get_users():
     all_users = BabarUser.query.all()
     json = {}
@@ -56,7 +56,7 @@ def get_users():
         json[user.id] = {'name': user.name, 'email': user.email}
     return jsonify(json)
 
-@app.route('/add_task')
+@app.route('/add_task') # required: user_id, name. optional: description, dismissable (default true), due date (default none)
 def add_task():
     the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
     task_name = request.args.get('name')
@@ -73,7 +73,7 @@ def add_task():
     json = {new_task.id: get_task_view(new_task)}
     return jsonify(json)
 
-@app.route('/dismiss_task')
+@app.route('/dismiss_task') # required: user_id, task_id
 def dismiss_task():
     the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
     the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
@@ -81,7 +81,7 @@ def dismiss_task():
     db.session.commit()
     return get_tasks_for_user()
 
-@app.route('/snooze_task')
+@app.route('/snooze_task') # required: user_id, task_id
 def snooze_task():
     the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
     the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
@@ -93,7 +93,7 @@ def snooze_task():
     db.session.commit()
     return get_tasks_for_user()
 
-@app.route('/get_tasks_for_user')
+@app.route('/get_tasks_for_user') # required: user_id
 def get_tasks_for_user():
     the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
     json = {}
@@ -102,7 +102,16 @@ def get_tasks_for_user():
         json[task.id] = get_task_view(task)
     return jsonify(json)
 
-def get_task_view(task):
+@app.route('/pass_task') # required: user_id, task_id, to_user_id
+def pass_task():
+    the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
+    the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
+    to_user = db.session.query(BabarUser).filter_by(id=request.args.get('to_user_id')).first() 
+    the_task.user_id = to_user.id
+    db.session.commit()
+    return get_tasks_for_user()
+
+def get_task_view(task): 
     due_date = task.due_date
     if task.due_date is not None:
         due_date = time.mktime(due_date.timetuple())
