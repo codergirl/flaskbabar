@@ -11,14 +11,6 @@ app.config.from_pyfile('config.py')
 
 db = SQLAlchemy(app)
 
-@app.route('/')
-def index_page():
-    return 'index'
-
-@app.route('/create_user')
-def create_user():
-    return "%s, %s" % (request.args.get('username'), request.args.get('email'))
-
 class BabarUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
@@ -30,4 +22,25 @@ class BabarUser(db.Model):
 
     def __repr__(self):
         return '<Name %r>' % self.name
+
+
+@app.route('/')
+def index_page():
+    return 'index'
+
+@app.route('/create_user')
+def create_user():
+    return "%s, %s" % (request.args.get('username'), request.args.get('email'))
+
+@app.route('/get/users')
+def get_users():
+    all_users = BabarUser.query.all()
+    json = {}
+    for user in users:
+        json[user.id] = {'name': user.username, 'email': user.email}
+    return json
+
+
+
+
 
