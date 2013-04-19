@@ -8,5 +8,4 @@ distribute==0.6.34
 gunicorn==0.17.2
 poster==0.8.1
 psycopg2==2.5
-pymongo==2.5
 wsgiref==0.1.2
