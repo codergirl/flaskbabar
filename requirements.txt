@@ -1,8 +1,12 @@
 Flask==0.9
+Flask-SQLAlchemy==0.16
 Jinja2==2.6
+SQLAlchemy==0.8.0
 Unicorn==1.0.1
 Werkzeug==0.8.3
 distribute==0.6.34
 gunicorn==0.17.2
 poster==0.8.1
+psycopg2==2.5
+pymongo==2.5
 wsgiref==0.1.2
