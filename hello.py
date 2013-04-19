@@ -32,11 +32,11 @@ def index_page():
 def create_user():
     return "%s, %s" % (request.args.get('username'), request.args.get('email'))
 
-@app.route('/get/users')
+@app.route('/get_users')
 def get_users():
     all_users = BabarUser.query.all()
     json = {}
-    for user in users:
+    for user in all_users:
         json[user.id] = {'name': user.username, 'email': user.email}
     return json
 
