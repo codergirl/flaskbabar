@@ -24,6 +24,14 @@ class BabarUser(db.Model):
         return '<Name %r>' % self.name
 
 
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    name = db.Column(db.String(128))
+    description = db.Column(db.String(1024), nullable=True)
+    dismissable = db.Column(db.Boolean, default=True)
+
+
 @app.route('/')
 def index_page():
     return 'index'
@@ -44,7 +52,26 @@ def get_users():
         json[user.id] = {'name': user.name, 'email': user.email}
     return jsonify(json)
 
+@app.route('/add_task')
+def add_task():
+    the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
+    task_name = request.args.get('name')
+    task_description = request.args.get('description')
+    dismissable = request.args.get('dismissable')
+    if dismissable is None:
+        dismissable = True
+    new_task = Task(user_id=the_user.id, name=task_name, description=task_description, dismissable=dismissable)
+    db.session.add(new_task)
+    db.session.commit()
 
+@app.route('/get_tasks_for_user')
+def get_tasks_for_user():
+    the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
+    json = {}
+    all_tasks = db.session.query(Task).filter_by(user_id=the_user.id)
+    for task in all_tasks:
+        json[task.id] = {'name': task.name, 'description': task.description, 'dismissable': task.dismissable}  
+    return jsonify(json)
 
 
 
