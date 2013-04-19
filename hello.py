@@ -17,7 +17,7 @@ def index_page():
 
 @app.route('/create_user')
 def create_user():
-    return request.args.get('username'), request.args.get('email')
+    return "%s, %s" % (request.args.get('username'), request.args.get('email'))
 
 class BabarUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
