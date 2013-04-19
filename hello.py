@@ -13,12 +13,11 @@ db = SQLAlchemy(app)
 
 @app.route('/')
 def index_page():
-    print 'index'
+    return 'index'
 
 @app.route('/create_user')
 def create_user():
-    print request.args.get('username')
-    print request.args.get('email')
+    return request.args.get('username'), request.args.get('email')
 
 class BabarUser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
