@@ -43,7 +43,7 @@ def create_user():
     new_user = BabarUser(request.args.get('username'), request.args.get('email'))
     db.session.add(new_user)
     db.session.commit()
-    json = {new_user.id: 'username':name, 'email':email}
+    json = {new_user.id: {'username':name, 'email':email}}
     return jsonify(json)
 
 
