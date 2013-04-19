@@ -79,13 +79,13 @@ def dismiss_task():
     the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
     the_task.active = False
     db.session.commit()
-    return jsonify(get_task_view(the_task))
+    return get_tasks_for_user()
 
 @app.route('/get_tasks_for_user')
 def get_tasks_for_user():
     the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
     json = {}
-    all_tasks = db.session.query(Task).filter_by(user_id=the_user.id)
+    all_tasks = db.session.query(Task).filter_by(user_id=the_user.id, active=True)
     for task in all_tasks:
         json[task.id] = get_task_view(task)
     return jsonify(json)
