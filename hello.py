@@ -81,6 +81,18 @@ def dismiss_task():
     db.session.commit()
     return get_tasks_for_user()
 
+@app.route('/snooze_task')
+def snooze_task():
+    the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
+    the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
+    if 'until' in request.args:
+        due_date = datetime.datetime.fromtimestamp(float(request.args.get('until')))
+    else:
+        due_date = datetime.datetime.now() + datetime.timedelta(seconds=60*10)
+    the_task.due_date = due_date
+    db.session.commit()
+    return get_tasks_for_user()
+
 @app.route('/get_tasks_for_user')
 def get_tasks_for_user():
     the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
