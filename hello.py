@@ -8,7 +8,7 @@ def hello():
     return 'index'
     
 
-@app.route('/create_user/<username/')
+@app.route('/create_user/<username>')
 def create_user(username):
     return 'User %s' % username
 
