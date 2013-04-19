@@ -37,7 +37,7 @@ def get_users():
     all_users = BabarUser.query.all()
     json = {}
     for user in all_users:
-        json[user.id] = {'name': user.username, 'email': user.email}
+        json[user.id] = {'name': user.name, 'email': user.email}
     return json
 
 
