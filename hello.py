@@ -30,7 +30,11 @@ def index_page():
 
 @app.route('/create_user')
 def create_user():
-    return "%s, %s" % (request.args.get('username'), request.args.get('email'))
+    new_user = BabarUser(request.args.get('username'), request.args.get('email'))
+    db.session.add(user)
+    db.session.commit()
+    return "User created: %s, %s" % (request.args.get('username'), request.args.get('email'))
+
 
 @app.route('/get_users')
 def get_users():
