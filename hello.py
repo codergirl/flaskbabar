@@ -30,6 +30,8 @@ class Task(db.Model):
     name = db.Column(db.String(128))
     description = db.Column(db.String(1024), nullable=True)
     dismissable = db.Column(db.Boolean, default=True)
+    due_date = db.Column(db.DateTime, nullable=True)
+    active = db.Column(db.Boolean, default=True)
 
 
 @app.route('/')
@@ -41,7 +43,8 @@ def create_user():
     new_user = BabarUser(request.args.get('username'), request.args.get('email'))
     db.session.add(new_user)
     db.session.commit()
-    return "User created: %s, %s" % (request.args.get('username'), request.args.get('email'))
+    json = {new_user.id: 'username':name, 'email':email}
+    return jsonify(json)
 
 
 @app.route('/get_users')
@@ -58,11 +61,21 @@ def add_task():
     task_name = request.args.get('name')
     task_description = request.args.get('description')
     dismissable = request.args.get('dismissable')
+    due_date = request.args.get('due_date')
     if dismissable is None:
         dismissable = True
-    new_task = Task(user_id=the_user.id, name=task_name, description=task_description, dismissable=dismissable)
+    new_task = Task(user_id=the_user.id, name=task_name, description=task_description, dismissable=dismissable, due_date=due_date, active=True)
     db.session.add(new_task)
     db.session.commit()
+    json = {new_task.id: 'name':new_task.name, 'description':new_task.description, 'dismissable':new_task.dismissable, 'due_date':new_task.due_date, 'active':new_task.active}
+
+@app.route('/dismiss_task')
+def dismiss_task():
+    the_user = db.session.query(BabarUser).filter_by(id=request.args.get('user_id')).first() 
+    the_task = db.session.query(Task).filter_by(id=request.args.get('task_id')).first() 
+    the_task.active = False
+    db.session.commit()
+    return get_task_view(the_task) 
 
 @app.route('/get_tasks_for_user')
 def get_tasks_for_user():
@@ -70,8 +83,9 @@ def get_tasks_for_user():
     json = {}
     all_tasks = db.session.query(Task).filter_by(user_id=the_user.id)
     for task in all_tasks:
-        json[task.id] = {'name': task.name, 'description': task.description, 'dismissable': task.dismissable}  
+        json[task.id] = get_task_view(task)
     return jsonify(json)
 
-
+def get_task_view(task):
+    return {'name': task.name, 'description': task.description, 'dismissable': task.dismissable, 'due_date':task.due_date, 'active':task.active}
 
